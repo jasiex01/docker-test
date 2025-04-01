@@ -69,23 +69,11 @@ RUN apt-get -y install ros-one-desktop
 #      cp /usr/lib/x86_64-linux-gnu/pkgconfig/* /usr/lib/aarch64-linux-gnu/pkgconfig/;   \
 #    fi
 
-#RUN git clone https://github.com/LeoRover/leo_common;                 \
-#    git clone https://github.com/LeoRover/leo_common-ros2;             \
-#    # Compile ROS1:                                                   \
-#    cd /leo_common/leo_msgs; \
-#    unset ROS_DISTRO;   \
-#    source /opt/ros/one/setup.bash; \                                             
-#    time colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release;        \
-#    # Compile ROS2:                                                   \
-#    unset ROS_DISTRO;   \
-#    cd /leo_common-ros2/leo_msgs;                                     \
-#    source /opt/ros/jazzy/setup.bash;                                 \
-#    time colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release;        
-
-RUN git clone https://github.com/TommyChangUMD/custom_msgs.git;       \
+RUN git clone https://github.com/LeoRover/leo_common;                 \
+    git clone https://github.com/LeoRover/leo_common-ros2;             \
     # Compile ROS1:                                                   \
     mkdir -p /ros1_ws/src;                                            \
-    cp -r /custom_msgs/custom_msgs_ros1 /ros1_ws/src;                 \
+    cp -r /leo_common/leo_msgs /ros1_ws/src;                         \
     cd /ros1_ws;                                                      \
     source /opt/ros/one/setup.bash;                                   \
     catkin_make_isolated --install;                                  \
@@ -93,10 +81,10 @@ RUN git clone https://github.com/TommyChangUMD/custom_msgs.git;       \
     # Compile ROS2:                
     unset ROS_DISTRO;                                   \
     mkdir -p /ros2_ws/src;                                            \
-    cp -r /custom_msgs/custom_msgs_ros2 /ros2_ws/src;                 \
+    cp -r /leo_common-ros2/leo_msgs /ros2_ws/src;                     \
     source /opt/ros/jazzy/setup.bash;                                \
     cd /ros2_ws;                                                      \
-    colcon build --packages-select custom_msgs; 
+    colcon build --packages-select leo_msgs; 
 
 ###########################
 # 7.) Compile ros1_bridge
@@ -122,10 +110,7 @@ RUN                                                                             
      source /opt/ros/one/setup.bash;                                                    \
      source /opt/ros/jazzy/setup.bash;                                                  \
      source /ros1_ws/install_isolated/setup.bash;                  \
-     # Apply ROS2 package overlay                                              \
      source /ros2_ws/install/local_setup.bash;               \
-     #source /leo_common/leo_msgs/install/setup.bash; \
-     #source /leo_common-ros2/leo_msgs/install/setup.bash; \
                                                                                         \
      #-------------------------------------                                             \
      # Finally, build the Bridge                                                        \
