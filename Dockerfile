@@ -69,18 +69,34 @@ RUN apt-get -y install ros-one-desktop
 #      cp /usr/lib/x86_64-linux-gnu/pkgconfig/* /usr/lib/aarch64-linux-gnu/pkgconfig/;   \
 #    fi
 
-RUN git clone https://github.com/LeoRover/leo_common;                 \
-    git clone https://github.com/LeoRover/leo_common-ros2;             \
+#RUN git clone https://github.com/LeoRover/leo_common;                 \
+#    git clone https://github.com/LeoRover/leo_common-ros2;             \
+#    # Compile ROS1:                                                   \
+#    cd /leo_common/leo_msgs; \
+#    unset ROS_DISTRO;   \
+#    source /opt/ros/one/setup.bash; \                                             
+#    time colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release;        \
+#    # Compile ROS2:                                                   \
+#    unset ROS_DISTRO;   \
+#    cd /leo_common-ros2/leo_msgs;                                     \
+#    source /opt/ros/jazzy/setup.bash;                                 \
+#    time colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release;        
+
+RUN git clone https://github.com/TommyChangUMD/custom_msgs.git;       \
     # Compile ROS1:                                                   \
-    cd /leo_common/leo_msgs; \
-    unset ROS_DISTRO;   \
-    source /opt/ros/one/setup.bash; \                                             
-    time colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release;        \
-    # Compile ROS2:                                                   \
-    unset ROS_DISTRO;   \
-    cd /leo_common-ros2/leo_msgs;                                     \
-    source /opt/ros/jazzy/setup.bash;                                 \
-    time colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release;        
+    mkdir -p /ros1_ws/src;                                            \
+    cp -r /custom_msgs/custom_msgs_ros1 /ros1_ws/src;                 \
+    cd /ros1_ws;                                                      \
+    source /opt/ros/one/setup.bash;                                   \
+    catkin_make_isolated --install;                                  \
+    #time colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release;        \
+    # Compile ROS2:                
+    unset ROS_DISTRO;                                   \
+    mkdir -p /ros2_ws/src;                                            \
+    cp -r /custom_msgs/custom_msgs_ros2 /ros2_ws/src;                 \
+    source /opt/ros/jazzy/setup.bash;                                \
+    cd /ros2_ws;                                                      \
+    colcon build --packages-select custom_msgs; 
 
 ###########################
 # 7.) Compile ros1_bridge
@@ -105,8 +121,11 @@ RUN                                                                             
      #-------------------------------------                                             \
      source /opt/ros/one/setup.bash;                                                    \
      source /opt/ros/jazzy/setup.bash;                                                  \
-     source /leo_common/leo_msgs/install/setup.bash; \
-     source /leo_common-ros2/leo_msgs/install/setup.bash; \
+     source /ros1_ws/install_isolated/setup.bash;                  \
+     # Apply ROS2 package overlay                                              \
+     source /ros2_ws/install/local_setup.bash;               \
+     #source /leo_common/leo_msgs/install/setup.bash; \
+     #source /leo_common-ros2/leo_msgs/install/setup.bash; \
                                                                                         \
      #-------------------------------------                                             \
      # Finally, build the Bridge                                                        \
@@ -128,9 +147,9 @@ RUN apt-get -y clean all; apt-get -y update
 # 9.) Pack all ROS1 dependent libraries
 ###########################
 # fix ARM64 pkgconfig path issue -- Fix provided by ambrosekwok 
-RUN if [[ $(uname -m) = "arm64" || $(uname -m) = "aarch64" ]]; then                    \
-      cp /usr/lib/x86_64-linux-gnu/pkgconfig/* /usr/lib/aarch64-linux-gnu/pkgconfig/;  \
-    fi
+#RUN if [[ $(uname -m) = "arm64" || $(uname -m) = "aarch64" ]]; then                    \
+#      cp /usr/lib/x86_64-linux-gnu/pkgconfig/* /usr/lib/aarch64-linux-gnu/pkgconfig/;  \
+#    fi
 
 
 RUN ROS1_LIBS="libactionlib.so";                                                \
