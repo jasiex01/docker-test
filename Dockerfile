@@ -105,8 +105,8 @@ RUN                                                                             
      #-------------------------------------                                             \
      source /opt/ros/one/setup.bash;                                                    \
      source /opt/ros/jazzy/setup.bash;                                                  \
-     source /leo_common/leo_msgs/install/setup.bash \
-     source /leo_common-ros2/leo_msgs/install/setup.bash \
+     source /leo_common/leo_msgs/install/setup.bash; \
+     source /leo_common-ros2/leo_msgs/install/setup.bash; \
                                                                                         \
      #-------------------------------------                                             \
      # Finally, build the Bridge                                                        \
