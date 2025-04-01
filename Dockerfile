@@ -105,6 +105,8 @@ RUN                                                                             
      #-------------------------------------                                             \
      source /opt/ros/one/setup.bash;                                                    \
      source /opt/ros/jazzy/setup.bash;                                                  \
+     source /leo_common/leo_msgs/install/setup.bash \
+     source /leo_common-ros2/leo_msgs/install/setup.bash \
                                                                                         \
      #-------------------------------------                                             \
      # Finally, build the Bridge                                                        \
@@ -130,7 +132,7 @@ RUN if [[ $(uname -m) = "arm64" || $(uname -m) = "aarch64" ]]; then             
       cp /usr/lib/x86_64-linux-gnu/pkgconfig/* /usr/lib/aarch64-linux-gnu/pkgconfig/;  \
     fi
 
-    
+
 RUN ROS1_LIBS="libactionlib.so";                                                \
     ROS1_LIBS="$ROS1_LIBS libroscpp.so";                                        \
     ROS1_LIBS="$ROS1_LIBS librosconsole.so";                                    \
